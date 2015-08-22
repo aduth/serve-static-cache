@@ -64,8 +64,9 @@ export class ServeStaticCache {
 	 * Removes the root directory, creating a new empty directory in its place.
 	 */
 	clean() {
-		rimraf( this.options.root, () => {} );
-		mkdir( this.options.root );
+		rimraf( this.options.root, () => {
+			mkdir( this.options.root );
+		} );
 	}
 
 	/**
