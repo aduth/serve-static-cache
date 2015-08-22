@@ -6,6 +6,13 @@ import { parse } from 'url';
 import { extname, join } from 'path';
 import { mkdir, writeFile } from 'fs';
 import rimraf from 'rimraf';
+import _debug from 'debug';
+
+/**
+ * Debug initialization
+ */
+
+const debug = _debug( 'serve-static-cache' );
 
 /**
  * ServeStaticCache
@@ -47,16 +54,19 @@ export class ServeStaticCache {
 	 */
 	middleware( request, response, next ) {
 		if ( request.method !== 'GET' ) {
+			debug( 'Skipping non-GET request at `%s`', request.url );
 			next();
 			return;
 		}
 
 		const send = response.send;
 		response.send = ( body ) => {
+			debug( 'Response send intercepted at `%s`', request.url );
 			this.cache( request, body );
 			send.call( response, body );
 		};
 
+		debug( 'Received request at `%s`', request.url );
 		next();
 	}
 
@@ -64,7 +74,9 @@ export class ServeStaticCache {
 	 * Removes the root directory, creating a new empty directory in its place.
 	 */
 	clean() {
+		debug( 'Removing root directory `%s`', this.options.root );
 		rimraf( this.options.root, () => {
+			debug( 'Creating root directory `%s`', this.options.root );
 			mkdir( this.options.root );
 		} );
 	}
@@ -80,6 +92,7 @@ export class ServeStaticCache {
 		const string = body instanceof Buffer ? body.toString() : body;
 		const target = this.target( request.url );
 
+		debug( 'Writing file for `%s` with %d characters to `%s`', request.url, string.length, target );
 		writeFile( target, string );
 	}
 
@@ -120,6 +133,7 @@ export default function( options ) {
 		throw new TypeError( 'Options must contain a root' );
 	}
 
+	debug( 'ServeStaticCache initialized' );
 	const cache = new ServeStaticCache( options );
 	return cache.middleware.bind( cache );
 };

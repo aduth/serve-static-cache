@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/aduth/serve-static-cache",
   "dependencies": {
+    "debug": "^2.2.0",
     "rimraf": "^2.4.2"
   },
   "devDependencies": {
