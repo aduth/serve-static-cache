@@ -4,7 +4,7 @@
 
 import { parse } from 'url';
 import { extname, join } from 'path';
-import { mkdir, writeFile } from 'fs';
+import { outputFile } from 'fs-extra';
 import rimraf from 'rimraf';
 import _debug from 'debug';
 
@@ -75,10 +75,7 @@ export class ServeStaticCache {
 	 */
 	clean() {
 		debug( 'Removing root directory `%s`', this.options.root );
-		rimraf( this.options.root, () => {
-			debug( 'Creating root directory `%s`', this.options.root );
-			mkdir( this.options.root );
-		} );
+		rimraf( this.options.root, () => {} );
 	}
 
 	/**
@@ -93,7 +90,7 @@ export class ServeStaticCache {
 		const target = this.target( request.url );
 
 		debug( 'Writing file for `%s` with %d characters to `%s`', request.url, string.length, target );
-		writeFile( target, string );
+		outputFile( target, string );
 	}
 
 	/**
