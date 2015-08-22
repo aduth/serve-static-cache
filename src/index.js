@@ -120,5 +120,6 @@ export default function( options ) {
 		throw new TypeError( 'Options must contain a root' );
 	}
 
-	return new ServeStaticCache( options ).middleware;
+	const cache = new ServeStaticCache( options );
+	return cache.middleware.bind( cache );
 };
