@@ -62,7 +62,11 @@ export class ServeStaticCache {
 		const send = response.send;
 		response.send = ( body ) => {
 			debug( 'Response send intercepted at `%s`', request.url );
-			this.cache( request, body );
+			if ( /^2\d{2}/.test( response.statusCode.toString() ) ) {
+				// Only cache the response if successful status code
+				this.cache( request, body );
+			}
+
 			send.call( response, body );
 		};
 
